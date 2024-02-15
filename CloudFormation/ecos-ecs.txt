@@ -14,7 +14,9 @@
     },
     "SecurityGroupIDs": {
       "Type": "CommaDelimitedList",
-      "Default": "sg-0de3c1e1a134c66d8"
+      "Default": {
+	    "Ref": "DefaultSecurityGroup"
+      }
     },
     "SubnetIDs": {
       "Type": "CommaDelimitedList",
@@ -22,10 +24,19 @@
     },
     "WebVpcID": {
       "Type": "String",
-      "Default": "vpc-0c6e6c6c8632fb271"
+      "Default": {
+        "Ref": "DevECSVPC"
+      }
     },
   },
   "Resources": {
+    "DevECSVPC": {
+      "Type" : "AWS::EC2::VPC",
+      "Properties" : {
+        "CidrBlock" : "172.31.0.0/16",
+        "InstanceTenancy" : "default"
+      }
+    },
     "ApiECSCluster": {
       "Type": "AWS::ECS::Cluster",
       "Properties": {
@@ -187,7 +198,6 @@
         "TaskRoleArn" : "arn:aws:iam::058264367679:role/ecos-ecs-task-role"
       }
     },
-    -------------------- FIXME
     "ApiSecurityGroup": {
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
@@ -215,7 +225,9 @@
             "Value": "dev"
           }
         ],
-        "VpcId" : "vpc-0c6e6c6c8632fb271"
+        "VpcId" :  {
+          "Ref": "DevECSVPC"
+        }
       }
     },
     "WebSecurityGroup": {
@@ -247,10 +259,34 @@
             "Value": "dev"
           }
         ],
-        "VpcId" : "vpc-0c6e6c6c8632fb271"
+        "VpcId" :  {
+          "Ref": "DevECSVPC"
+        }
       }
     },
-    ---------------------FIXME: DEFAULT SECURITY GROUP: third in aws ec2 describe-security-groups
+    "DefaultSecurityGroup": {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+        "GroupDescription" : "default VPC security group",
+        "GroupName" : "default",
+        "SecurityGroupEgress"															 : [
+          {
+            "CidrIp" : "0.0.0.0/0",
+            "IpProtocol" : "-1"
+          },
+        ],
+        "SecurityGroupIngress" : [
+          {
+            "IpProtocol" : "-1",
+			"GroupId": "sg-0de3c1e1a134c66d8",
+			"GroupName": String
+          },
+        ],
+        "VpcId" :  {
+          "Ref": "DevECSVPC"
+        }
+      }
+    },
     "ApiECSService": {
       "Type": "AWS::ECS::Service",
       "Properties": {
@@ -364,7 +400,9 @@
       "Properties" : {
         "Protocol" : "HTTP",
         "Port" : 80,
-        "VpcId" : "vpc-0c6e6c6c8632fb271",
+        "VpcId" :  {
+          "Ref": "DevECSVPC"
+         },
         "HealthCheckEnabled" : true,
         "HealthCheckIntervalSeconds" : 120,
         "HealthCheckPath" : "/",
@@ -386,7 +424,9 @@
       "Properties" : {
         "Protocol" : "HTTP",
         "Port" : 80,
-        "VpcId" : "vpc-0c6e6c6c8632fb271",
+        "VpcId" :  {
+          "Ref": "DevECSVPC"
+        },
         "HealthCheckEnabled" : true,
         "HealthCheckIntervalSeconds" : 120,
         "HealthCheckPath" : "/",
@@ -411,7 +451,11 @@
         "LoadBalancerAttributes" : [ FIXME_LoadBalancerAttribute, ... ],
         "Name" : "ecos-api-alb",
         "Scheme" : "internal",
-        "SecurityGroups" : [ "sg-05ce9300d9ef7e407" ],
+        "SecurityGroups" : [
+          {
+            "Ref": "ApiSecurityGroup"
+          }
+        ],
         "Subnets" : [ "subnet-0160efb3bae4e4d37", "subnet-0941b88ce2f2f04c0" ],
         "Tags" : [ Tag, ... ],
         "Type" : String
@@ -423,15 +467,17 @@
         "LoadBalancerAttributes" : [ FIXME_LoadBalancerAttribute, ... ],
         "Name" : "ecos-ui-alb",
         "Scheme" : "internal",
-        "SecurityGroups" : [ "sg-0cb07781b65f0b9fc" ],
+        "SecurityGroups" : [
+          {
+            "Ref": "WebSecurityGroup"
+          }
+        ],
         "Subnets" : [ "subnet-0160efb3bae4e4d37", "subnet-0941b88ce2f2f04c0" ],
         "Tags" : [ Tag, ... ],
         "Type" : String
     }
   },
-    
-    -------------------FIXME ADD VPC
-},
+  },
   "Outputs": {
     "ECSCluster": {
       "Description": "The created cluster.",
