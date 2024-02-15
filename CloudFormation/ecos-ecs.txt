@@ -2,27 +2,27 @@
   "AWSTemplateFormatVersion": "2010-09-09",
   "Description": "Template to create core ECOS resources.",
   "Parameters": {
-    "ApiECSClusterName": {
+    "DevApiECSClusterName": {
       "Type": "String",
       "Description": "Specifies the ECS Cluster Name with which the resources would be associated",
-      "Default": "ecos-api-ecs-cluster"
+      "Default": "dev-ecos-api-ecs-cluster"
     },
-    "WebECSClusterName": {
+    "DevWebECSClusterName": {
       "Type": "String",
       "Description": "Specifies the ECS Cluster Name with which the resources would be associated",
-      "Default": "ecos-web-ecs-cluster"
+      "Default": "dev-ecos-web-ecs-cluster"
     },
-    "SecurityGroupIDs": {
+    "DevSecurityGroupIDs": {
       "Type": "CommaDelimitedList",
       "Default": {
-	    "Ref": "DefaultSecurityGroup"
+	    "Ref": "DevDefaultSecurityGroup"
       }
     },
-    "SubnetIDs": {
+    "DevSubnetIDs": {
       "Type": "CommaDelimitedList",
       "Default": "subnet-0941b88ce2f2f04c0,subnet-006cfb1b38a9040d2,subnet-0dea032c80563fb24,subnet-054df7c9fbcdbae9e,subnet-0160efb3bae4e4d37,subnet-08b52b072d0f1b4c3"
     },
-    "WebVpcID": {
+    "DevWebVpcID": {
       "Type": "String",
       "Default": {
         "Ref": "DevECSVPC"
@@ -37,11 +37,11 @@
         "InstanceTenancy" : "default"
       }
     },
-    "ApiECSCluster": {
+    "DevApiECSCluster": {
       "Type": "AWS::ECS::Cluster",
       "Properties": {
         "ClusterName": {
-          "Ref": "ApiECSClusterName"
+          "Ref": "DevApiECSClusterName"
         },  
         "CapacityProviders": [
           "FARGATE",
@@ -59,21 +59,21 @@
           }
         },
         "ServiceConnectDefaults": {
-          "Namespace": "ecos-api-ecs-cluster"
+          "Namespace": "dev-ecos-api-ecs-cluster"
         },
         "Tags": [
           {
             "Key": "Name",
-            "Value": "ecos-api-ecs-cluster"
+            "Value": "dev-ecos-api-ecs-cluster"
           }
         ]
       }
     },
-    "WebECSCluster": {
+    "DevWebECSCluster": {
       "Type": "AWS::ECS::Cluster",
       "Properties": {
         "ClusterName": {
-          "Ref": "WebECSClusterName"
+          "Ref": "DevWebECSClusterName"
         },
         "CapacityProviders": [
           "FARGATE",
@@ -90,27 +90,27 @@
           }
         },
         "ServiceConnectDefaults": {
-          "Namespace": "ecos-web-ecs-cluster"
+          "Namespace": "dev-ecos-web-ecs-cluster"
         },
         "Tags": [
           {
             "Key": "Name",
-            "Value": "ecos-web-ecs-cluster"
+            "Value": "dev-ecos-web-ecs-cluster"
           }
         ]
       }
     },
-    "ApiTaskDefinition": {
+    "DevApiTaskDefinition": {
       "Type" : "AWS::ECS::TaskDefinition",
       "Properties" : {
         "containerDefinitions": [
         {
-          "name": "ecos-api-cont",
+          "name": "dev-ecos-api-cont",
           "image": "058264367679.dkr.ecr.us-east-1.amazonaws.com/ecos-api-repo:latest",
           "cpu": 0,
           "portMappings": [
             {
-              "name": "ecos-api-cont-8001-tcp",
+              "name": "dev-ecos-api-cont-8001-tcp",
               "containerPort": 8001,
               "hostPort": 8001,
               "protocol": "tcp"
@@ -141,15 +141,15 @@
         }
         ],
         "Cpu" : 4096,
-        "ExecutionRoleArn" : "arn:aws:iam::058264367679:role/ecos-ecs-task-execution-role",
-        "Family" : "ecos-api-td",
+        "ExecutionRoleArn" : "arn:aws:iam::058264367679:role/dev-ecos-ecs-task-execution-role",
+        "Family" : "dev-ecos-api-td",
         "Memory" : 8192,
         "NetworkMode" : "awsvpc",
         "RequiresCompatibilities" : [ "FARGATE" ],
-        "TaskRoleArn" : "arn:aws:iam::058264367679:role/ecos-ecs-task-role"
+        "TaskRoleArn" : "arn:aws:iam::058264367679:role/dev-ecos-ecs-task-role"
       }
     },
-    "WebTaskDefinition": {
+    "DevWebTaskDefinition": {
       "Type" : "AWS::ECS::TaskDefinition",
       "Properties" : {
         "ContainerDefinitions" : [
@@ -159,7 +159,7 @@
           "cpu": 0,
           "portMappings": [
           {
-            "name": "ecos-ui-cont-8002-tcp",
+            "name": "dev-ecos-ui-cont-8002-tcp",
             "containerPort": 8002,
             "hostPort": 8002,
             "protocol": "tcp"
@@ -198,11 +198,11 @@
         "TaskRoleArn" : "arn:aws:iam::058264367679:role/ecos-ecs-task-role"
       }
     },
-    "ApiSecurityGroup": {
+    "DevApiSecurityGroup": {
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
-        "GroupDescription" : "ecos-api-alb-sg",
-        "GroupName" : "ecos-api-alb-sg",
+        "GroupDescription" : "dev-ecos-api-alb-sg",
+        "GroupName" : "dev-ecos-api-alb-sg",
         "SecurityGroupEgress" : [
           {
             "CidrIp" : "0.0.0.0/0",
@@ -218,7 +218,7 @@
         "Tags": [
           {
             "Key": "Name",
-            "Value": "ecos-api-alb-sg"
+            "Value": "dev-ecos-api-alb-sg"
           },
           {
             "Key": "Environment",
@@ -230,11 +230,11 @@
         }
       }
     },
-    "WebSecurityGroup": {
+    "DevWebSecurityGroup": {
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
-        "GroupDescription" : "ecos-web-alb-sg",
-        "GroupName" : "ecos-web-alb-sg",
+        "GroupDescription" : "dev-ecos-web-alb-sg",
+        "GroupName" : "dev-ecos-web-alb-sg",
         "SecurityGroupEgress" : [
           {
             "CidrIp" : "0.0.0.0/0",
@@ -252,7 +252,7 @@
         "Tags": [
           {
             "Key": "Name",
-            "Value": "ecos-web-alb-sg"
+            "Value": "dev-ecos-web-alb-sg"
           },
           {
             "Key": "Environment",
@@ -264,7 +264,7 @@
         }
       }
     },
-    "DefaultSecurityGroup": {
+    "DevDefaultSecurityGroup": {
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
         "GroupDescription" : "default VPC security group",
@@ -287,10 +287,10 @@
         }
       }
     },
-    "ApiECSService": {
+    "DevApiECSService": {
       "Type": "AWS::ECS::Service",
       "Properties": {
-        "Cluster": "ecos-api-ecs-cluster",
+        "Cluster": "dev-ecos-api-ecs-cluster",
         "CapacityProviderStrategy": [
           {
             "CapacityProvider": "FARGATE",
@@ -298,8 +298,8 @@
             "Weight": 1
           }
         ],
-        "TaskDefinition": "arn:aws:ecs:us-east-1:058264367679:task-definition/ecos-api-td:1",
-        "ServiceName": "ecos-api-service",
+        "TaskDefinition": "arn:aws:ecs:us-east-1:058264367679:task-definition/dev-ecos-api-td:1",
+        "ServiceName": "dev-ecos-api-service",
         "SchedulingStrategy": "REPLICA",
         "DesiredCount": 1,
         "NetworkConfiguration": {
@@ -331,7 +331,7 @@
         "Tags": [
           {
             "Key": "Name",
-            "Value": "ecos-api-service"
+            "Value": "dev-ecos-api-service"
           },
           {
             "Key": "Environment",
@@ -341,10 +341,10 @@
         "EnableECSManagedTags": true
       }
     },
-    "WebECSService": {
+    "DevWebECSService": {
       "Type": "AWS::ECS::Service",
       "Properties": {
-        "Cluster": "ecos-web-ecs-cluster",
+        "Cluster": "dev-ecos-web-ecs-cluster",
         "CapacityProviderStrategy": [
           {
             "CapacityProvider": "FARGATE",
@@ -352,8 +352,8 @@
             "Weight": 1
           }
         ],
-        "TaskDefinition": "arn:aws:ecs:us-east-1:058264367679:task-definition/ecos-ui-td:1",
-        "ServiceName": "ecos-ui-service",
+        "TaskDefinition": "arn:aws:ecs:us-east-1:058264367679:task-definition/dev-ecos-ui-td:1",
+        "ServiceName": "dev-ecos-ui-service",
         "SchedulingStrategy": "REPLICA",
         "DesiredCount": 1,
         "NetworkConfiguration": {
@@ -385,7 +385,7 @@
         "Tags": [
           {
             "Key": "Name",
-            "Value": "ecos-ui-service"
+            "Value": "dev-ecos-ui-service"
           },
           {
             "Key": "Environment",
@@ -395,7 +395,7 @@
         "EnableECSManagedTags": true
       }
     },
-    "ECSApiTargetGroup": {
+    "DevECSApiTargetGroup": {
       "Type" : "AWS::ElasticLoadBalancingV2::TargetGroup",
       "Properties" : {
         "Protocol" : "HTTP",
@@ -443,31 +443,31 @@
         "UnhealthyThresholdCount" : 2,
       }
     },
-    "ECSApiLoadBalancer": {
+    "DevECSApiLoadBalancer": {
       "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
       "Properties": {
         "IpAddressType" : "ipv4",
         "LoadBalancerAttributes" : [ FIXME_LoadBalancerAttribute, ... ],
-        "Name" : "ecos-api-alb",
+        "Name" : "dev-ecos-api-alb",
         "Scheme" : "internal",
         "SecurityGroups" : [
           {
-            "Ref": "ApiSecurityGroup"
+            "Ref": "DevApiSecurityGroup"
           }
         ],
         "Subnets" : [ "subnet-0160efb3bae4e4d37", "subnet-0941b88ce2f2f04c0" ],
         "Type" : "application"
     },
-    "ECSWebLoadBalancer": {
+    "DevECSWebLoadBalancer": {
       "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
       "Properties": {
         "IpAddressType" : "ipv4",
         "LoadBalancerAttributes" : [ FIXME_LoadBalancerAttribute, ... ],
-        "Name" : "ecos-ui-alb",
+        "Name" : "dev-ecos-ui-alb",
         "Scheme" : "internal",
         "SecurityGroups" : [
           {
-            "Ref": "WebSecurityGroup"
+            "Ref": "DevWebSecurityGroup"
           }
         ],
         "Subnets" : [ "subnet-0160efb3bae4e4d37", "subnet-0941b88ce2f2f04c0" ],
@@ -479,25 +479,25 @@
     "ECSCluster": {
       "Description": "The created cluster.",
       "Value": {
-        "Ref": "ApiECSCluster"
+        "Ref": "DevApiECSCluster"
       }
     },
     "ECSCluster": {
       "Description": "The created cluster.",
       "Value": {
-        "Ref": "WebECSCluster"
-      }
-    },
-  "ECSService": {
-      "Description": "The created service.",
-      "Value": {
-        "Ref": "ApiECSService"
+        "Ref": "DevWebECSCluster"
       }
     },
     "ECSService": {
       "Description": "The created service.",
       "Value": {
-        "Ref": "WebECSService"
+        "Ref": "DevApiECSService"
+      }
+    },
+    "ECSService": {
+      "Description": "The created service.",
+      "Value": {
+        "Ref": "DevWebECSService"
       }
     }
   }
