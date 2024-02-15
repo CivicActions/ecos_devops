@@ -187,6 +187,70 @@
         "TaskRoleArn" : "arn:aws:iam::058264367679:role/ecos-ecs-task-role"
       }
     },
+    -------------------- FIXME
+    "ApiSecurityGroup": {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+        "GroupDescription" : "ecos-api-alb-sg",
+        "GroupName" : "ecos-api-alb-sg",
+        "SecurityGroupEgress" : [
+          {
+            "CidrIp" : "0.0.0.0/0",
+            "IpProtocol" : "-1",
+          },
+        ],
+        "SecurityGroupIngress" : [
+          {
+            "CidrIp" : "0.0.0.0/0",
+            "IpProtocol" : "-1",
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "ecos-api-alb-sg"
+          },
+          {
+            "Key": "Environment",
+            "Value": "dev"
+          }
+        ],
+        "VpcId" : "vpc-0c6e6c6c8632fb271"
+      }
+    },
+    "WebSecurityGroup": {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+        "GroupDescription" : "ecos-web-alb-sg",
+        "GroupName" : "ecos-web-alb-sg",
+        "SecurityGroupEgress" : [
+          {
+            "CidrIp" : "0.0.0.0/0",
+            "IpProtocol" : "-1",
+          },
+        ],
+        "SecurityGroupIngress" : [
+          {
+            "CidrIp" : "0.0.0.0/0",
+            "FromPort" : 0,
+            "IpProtocol" : "tcp",
+            "ToPort" : 0,
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "ecos-web-alb-sg"
+          },
+          {
+            "Key": "Environment",
+            "Value": "dev"
+          }
+        ],
+        "VpcId" : "vpc-0c6e6c6c8632fb271"
+      }
+    },
+    ---------------------FIXME: DEFAULT SECURITY GROUP: third in aws ec2 describe-security-groups
     "ApiECSService": {
       "Type": "AWS::ECS::Service",
       "Properties": {
