@@ -12,23 +12,6 @@
       "Description": "Specifies the ECS Cluster Name with which the resources would be associated",
       "Default": "dev-ecos-web-ecs-cluster"
     },
-    "DevSecurityGroupIDs": {
-      "Type": "CommaDelimitedList",
-      "Default": {
-	    "Ref": "DevDefaultSecurityGroup"
-      }
-    },
-    "DevSubnetIDs": {
-      "Type": "CommaDelimitedList",
-      "Default": "subnet-0941b88ce2f2f04c0,subnet-006cfb1b38a9040d2,subnet-0dea032c80563fb24,subnet-054df7c9fbcdbae9e,subnet-0160efb3bae4e4d37,subnet-08b52b072d0f1b4c3"
-    },
-    "DevWebVpcID": {
-      "Type": "String",
-      "Default": {
-        "Ref": "DevECSVPC"
-      }
-    },
-  },
   "Resources": {
     "DevECSVPC": {
       "Type" : "AWS::EC2::VPC",
@@ -37,6 +20,120 @@
         "InstanceTenancy" : "default"
       }
     },
+    "DevSubnetA" {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : {
+        "AvailabilityZone" : "us-east-1a",
+        "AvailabilityZoneId" : "use1-az2",
+        "CidrBlock" : "172.31.80.0/20",
+        "EnableDns64" : false,
+        "Ipv6Native" : false,
+        "MapPublicIpOnLaunch" : true,
+        "PrivateDnsNameOptionsOnLaunch" : {
+          "HostnameType": "ip-name",
+          "EnableResourceNameDnsARecord": false,
+          "EnableResourceNameDnsAAAARecord": false
+        },
+        "VpcId" : {
+          "Ref": "DevECSVPC"
+        }
+      }
+	},
+    "DevSubnetB" {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : {
+        "AvailabilityZone" : "us-east-1b",
+        "AvailabilityZoneId" : "use1-az4",
+        "CidrBlock" : "172.31.16.0/20",
+        "EnableDns64" : false,
+        "Ipv6Native" : false,
+        "MapPublicIpOnLaunch" : true,
+        "PrivateDnsNameOptionsOnLaunch" : {
+          "HostnameType": "ip-name",
+          "EnableResourceNameDnsARecord": false,
+          "EnableResourceNameDnsAAAARecord": false
+        },
+        "VpcId" : {
+          "Ref": "DevECSVPC"
+        }
+      }
+	},
+    "DevSubnetC" {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : {
+        "AvailabilityZone" : "us-east-1c",
+        "AvailabilityZoneId" : "use1-az6",
+        "CidrBlock" : "172.31.32.0/20",
+        "EnableDns64" : false,
+        "Ipv6Native" : false,
+        "MapPublicIpOnLaunch" : true,
+        "PrivateDnsNameOptionsOnLaunch" : {
+          "HostnameType": "ip-name",
+          "EnableResourceNameDnsARecord": false,
+          "EnableResourceNameDnsAAAARecord": false
+        },
+        "VpcId" : {
+          "Ref": "DevECSVPC"
+        }
+      }
+	},
+    "DevSubnetD" {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : {
+        "AvailabilityZone" : "us-east-1d",
+        "AvailabilityZoneId" : "use1-az1",
+        "CidrBlock" : "172.31.0.0/20",
+        "EnableDns64" : false,
+        "Ipv6Native" : false,
+        "MapPublicIpOnLaunch" : true,
+        "PrivateDnsNameOptionsOnLaunch" : {
+          "HostnameType": "ip-name",
+          "EnableResourceNameDnsARecord": false,
+          "EnableResourceNameDnsAAAARecord": false
+        },
+        "VpcId" : {
+          "Ref": "DevECSVPC"
+        }
+      }
+	},
+    "DevSubnetE" {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : {
+        "AvailabilityZone" : "us-east-1e",
+        "AvailabilityZoneId" : "use1-az3",
+        "CidrBlock" : "172.31.48.0/20",
+        "EnableDns64" : false,
+        "Ipv6Native" : false,
+        "MapPublicIpOnLaunch" : true,
+        "PrivateDnsNameOptionsOnLaunch" : {
+          "HostnameType": "ip-name",
+          "EnableResourceNameDnsARecord": false,
+          "EnableResourceNameDnsAAAARecord": false
+        },
+        "VpcId" : {
+          "Ref": "DevECSVPC"
+        }
+      }
+	},
+	"DevSubnetF" {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : {
+        "AvailabilityZone" : "us-east-1f",
+        "AvailabilityZoneId" : "use1-az5",
+        "CidrBlock" : "172.31.64.0/20",
+        "EnableDns64" : false,
+        "Ipv6Native" : false,
+        "MapPublicIpOnLaunch" : true,
+        "PrivateDnsNameOptionsOnLaunch" : {
+          "HostnameType": "ip-name",
+          "EnableResourceNameDnsARecord": false,
+          "EnableResourceNameDnsAAAARecord": false
+        },
+        "VpcId" : {
+          "Ref": "DevECSVPC"
+        }
+      }
+	},
     "DevApiECSCluster": {
       "Type": "AWS::ECS::Cluster",
       "Properties": {
@@ -308,9 +405,14 @@
             "SecurityGroups": {
               "Ref": "SecurityGroupIDs"
             },
-            "Subnets": {
-              "Ref": "DevSubnetIDs"
-            }
+            "Subnets": [
+			  { "Ref": "DevSubnetA" },
+              { "Ref": "DevSubnetB" },
+              { "Ref": "DevSubnetC" },
+              { "Ref": "DevSubnetD" },
+              { "Ref": "DevSubnetE" },
+              { "Ref": "DevSubnetF" }
+            ]
           }
         },
         "PlatformVersion": "LATEST",
@@ -362,9 +464,14 @@
             "SecurityGroups": {
               "Ref": "SecurityGroupIDs"
             },
-            "Subnets": {
-              "Ref": "DevSubnetIDs"
-            }
+            "Subnets":  [
+			  { "Ref": "DevSubnetA" },
+              { "Ref": "DevSubnetB" },
+              { "Ref": "DevSubnetC" },
+              { "Ref": "DevSubnetD" },
+              { "Ref": "DevSubnetE" },
+              { "Ref": "DevSubnetF" }
+            ]
           }
         },
         "PlatformVersion": "LATEST",
@@ -454,7 +561,10 @@
             "Ref": "DevApiSecurityGroup"
           }
         ],
-        "Subnets" : [ "subnet-0160efb3bae4e4d37", "subnet-0941b88ce2f2f04c0" ],
+        "Subnets" :  [
+          { "Ref": "DevSubnetA" },
+          { "Ref": "DevSubnetD" }
+        ],
         "Type" : "application"
     },
     "DevECSWebLoadBalancer": {
@@ -468,7 +578,10 @@
             "Ref": "DevWebSecurityGroup"
           }
         ],
-        "Subnets" : [ "subnet-0160efb3bae4e4d37", "subnet-0941b88ce2f2f04c0" ],
+        "Subnets" :  [
+          { "Ref": "DevSubnetA" },
+          { "Ref": "DevSubnetD" }
+        ],
         "Type" : "application"
       }
     },
