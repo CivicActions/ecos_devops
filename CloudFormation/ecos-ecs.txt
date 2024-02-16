@@ -526,7 +526,7 @@
         "UnhealthyThresholdCount" : 2
       }
     },
-    "ECSWebTargetGroup": {
+    "DevECSWebTargetGroup": {
       "Type" : "AWS::ElasticLoadBalancingV2::TargetGroup",
       "Properties" : {
         "Protocol" : "HTTP",
