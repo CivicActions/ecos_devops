@@ -309,7 +309,7 @@
               "Ref": "SecurityGroupIDs"
             },
             "Subnets": {
-              "Ref": "SubnetIDs"
+              "Ref": "DevSubnetIDs"
             }
           }
         },
@@ -363,7 +363,7 @@
               "Ref": "SecurityGroupIDs"
             },
             "Subnets": {
-              "Ref": "SubnetIDs"
+              "Ref": "DevSubnetIDs"
             }
           }
         },
@@ -447,7 +447,6 @@
       "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
       "Properties": {
         "IpAddressType" : "ipv4",
-        "LoadBalancerAttributes" : [ FIXME_LoadBalancerAttribute, ... ],
         "Name" : "dev-ecos-api-alb",
         "Scheme" : "internal",
         "SecurityGroups" : [
@@ -462,7 +461,6 @@
       "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
       "Properties": {
         "IpAddressType" : "ipv4",
-        "LoadBalancerAttributes" : [ FIXME_LoadBalancerAttribute, ... ],
         "Name" : "dev-ecos-ui-alb",
         "Scheme" : "internal",
         "SecurityGroups" : [
