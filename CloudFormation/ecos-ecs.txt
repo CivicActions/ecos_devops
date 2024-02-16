@@ -11,7 +11,8 @@
       "Type": "String",
       "Description": "Specifies the ECS Cluster Name with which the resources would be associated",
       "Default": "dev-ecos-web-ecs-cluster"
-    },
+    }
+  },
   "Resources": {
     "DevECSVPC": {
       "Type" : "AWS::EC2::VPC",
@@ -20,7 +21,7 @@
         "InstanceTenancy" : "default"
       }
     },
-    "DevSubnetA" {
+    "DevSubnetA": {
       "Type" : "AWS::EC2::Subnet",
       "Properties" : {
         "AvailabilityZone" : "us-east-1a",
@@ -39,7 +40,7 @@
         }
       }
 	},
-    "DevSubnetB" {
+    "DevSubnetB": {
       "Type" : "AWS::EC2::Subnet",
       "Properties" : {
         "AvailabilityZone" : "us-east-1b",
@@ -58,7 +59,7 @@
         }
       }
 	},
-    "DevSubnetC" {
+    "DevSubnetC": {
       "Type" : "AWS::EC2::Subnet",
       "Properties" : {
         "AvailabilityZone" : "us-east-1c",
@@ -77,7 +78,7 @@
         }
       }
 	},
-    "DevSubnetD" {
+    "DevSubnetD": {
       "Type" : "AWS::EC2::Subnet",
       "Properties" : {
         "AvailabilityZone" : "us-east-1d",
@@ -96,7 +97,7 @@
         }
       }
 	},
-    "DevSubnetE" {
+    "DevSubnetE": {
       "Type" : "AWS::EC2::Subnet",
       "Properties" : {
         "AvailabilityZone" : "us-east-1e",
@@ -115,7 +116,7 @@
         }
       }
 	},
-	"DevSubnetF" {
+	"DevSubnetF": {
       "Type" : "AWS::EC2::Subnet",
       "Properties" : {
         "AvailabilityZone" : "us-east-1f",
@@ -303,14 +304,14 @@
         "SecurityGroupEgress" : [
           {
             "CidrIp" : "0.0.0.0/0",
-            "IpProtocol" : "-1",
-          },
+            "IpProtocol" : "-1"
+          }
         ],
         "SecurityGroupIngress" : [
           {
             "CidrIp" : "0.0.0.0/0",
-            "IpProtocol" : "-1",
-          },
+            "IpProtocol" : "-1"
+          }
         ],
         "Tags": [
           {
@@ -335,16 +336,16 @@
         "SecurityGroupEgress" : [
           {
             "CidrIp" : "0.0.0.0/0",
-            "IpProtocol" : "-1",
-          },
+            "IpProtocol" : "-1"
+          }
         ],
         "SecurityGroupIngress" : [
           {
             "CidrIp" : "0.0.0.0/0",
             "FromPort" : 0,
             "IpProtocol" : "tcp",
-            "ToPort" : 0,
-          },
+            "ToPort" : 0
+          }
         ],
         "Tags": [
           {
@@ -366,18 +367,17 @@
       "Properties" : {
         "GroupDescription" : "default VPC security group",
         "GroupName" : "default",
-        "SecurityGroupEgress"															 : [
+        "SecurityGroupEgress": [
           {
             "CidrIp" : "0.0.0.0/0",
             "IpProtocol" : "-1"
-          },
+          }
         ],
         "SecurityGroupIngress" : [
           {
             "IpProtocol" : "-1",
-			"GroupId": "sg-0de3c1e1a134c66d8",
-			"GroupName": String
-          },
+			"GroupId": "sg-0de3c1e1a134c66d8"
+          }
         ],
         "VpcId" :  {
           "Ref": "DevECSVPC"
@@ -403,7 +403,7 @@
           "AwsvpcConfiguration": {
             "AssignPublicIp": "ENABLED",
             "SecurityGroups": {
-              "Ref": "SecurityGroupIDs"
+              "Ref": "DevDefaultSecurityGroup"
             },
             "Subnets": [
 			  { "Ref": "DevSubnetA" },
@@ -462,9 +462,9 @@
           "AwsvpcConfiguration": {
             "AssignPublicIp": "ENABLED",
             "SecurityGroups": {
-              "Ref": "SecurityGroupIDs"
+              "Ref": "DevDefaultSecurityGroup"
             },
-            "Subnets":  [
+            "Subnets": [
 			  { "Ref": "DevSubnetA" },
               { "Ref": "DevSubnetB" },
               { "Ref": "DevSubnetC" },
@@ -523,7 +523,7 @@
         },
         "ProtocolVersion" : "HTTP1",
         "TargetType" : "ip",
-        "UnhealthyThresholdCount" : 2,
+        "UnhealthyThresholdCount" : 2
       }
     },
     "ECSWebTargetGroup": {
@@ -547,7 +547,7 @@
         },
         "ProtocolVersion" : "HTTP1",
         "TargetType" : "ip",
-        "UnhealthyThresholdCount" : 2,
+        "UnhealthyThresholdCount" : 2
       }
     },
     "DevECSApiLoadBalancer": {
@@ -566,6 +566,7 @@
           { "Ref": "DevSubnetD" }
         ],
         "Type" : "application"
+      }
     },
     "DevECSWebLoadBalancer": {
       "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
@@ -584,7 +585,7 @@
         ],
         "Type" : "application"
       }
-    },
+    }
   },
   "Outputs": {
     "ECSCluster": {
