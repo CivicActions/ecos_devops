@@ -135,7 +135,7 @@
         }
       }
 	},
-    "DevApiECSCluster": {
+    "DevApiECS ": {
       "Type": "AWS::ECS::Cluster",
       "Properties": {
         "ClusterName": {
@@ -375,8 +375,7 @@
         ],
         "SecurityGroupIngress" : [
           {
-            "IpProtocol" : "-1",
-			"GroupId": "sg-0de3c1e1a134c66d8"
+            "IpProtocol" : "-1"
           }
         ],
         "VpcId" :  {
