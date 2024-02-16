@@ -25,7 +25,6 @@
       "Type" : "AWS::EC2::Subnet",
       "Properties" : {
         "AvailabilityZone" : "us-east-1a",
-        "AvailabilityZoneId" : "use1-az2",
         "CidrBlock" : "172.31.80.0/20",
         "EnableDns64" : false,
         "Ipv6Native" : false,
@@ -44,7 +43,6 @@
       "Type" : "AWS::EC2::Subnet",
       "Properties" : {
         "AvailabilityZone" : "us-east-1b",
-        "AvailabilityZoneId" : "use1-az4",
         "CidrBlock" : "172.31.16.0/20",
         "EnableDns64" : false,
         "Ipv6Native" : false,
@@ -63,7 +61,6 @@
       "Type" : "AWS::EC2::Subnet",
       "Properties" : {
         "AvailabilityZone" : "us-east-1c",
-        "AvailabilityZoneId" : "use1-az6",
         "CidrBlock" : "172.31.32.0/20",
         "EnableDns64" : false,
         "Ipv6Native" : false,
@@ -82,7 +79,6 @@
       "Type" : "AWS::EC2::Subnet",
       "Properties" : {
         "AvailabilityZone" : "us-east-1d",
-        "AvailabilityZoneId" : "use1-az1",
         "CidrBlock" : "172.31.0.0/20",
         "EnableDns64" : false,
         "Ipv6Native" : false,
@@ -101,7 +97,6 @@
       "Type" : "AWS::EC2::Subnet",
       "Properties" : {
         "AvailabilityZone" : "us-east-1e",
-        "AvailabilityZoneId" : "use1-az3",
         "CidrBlock" : "172.31.48.0/20",
         "EnableDns64" : false,
         "Ipv6Native" : false,
@@ -120,7 +115,6 @@
       "Type" : "AWS::EC2::Subnet",
       "Properties" : {
         "AvailabilityZone" : "us-east-1f",
-        "AvailabilityZoneId" : "use1-az5",
         "CidrBlock" : "172.31.64.0/20",
         "EnableDns64" : false,
         "Ipv6Native" : false,
