@@ -135,7 +135,7 @@
         }
       }
 	},
-    "DevApiECS ": {
+    "DevApiECS": {
       "Type": "AWS::ECS::Cluster",
       "Properties": {
         "ClusterName": {
