@@ -388,7 +388,7 @@
             "Weight": 1
           }
         ],
-        "TaskDefinition": "arn:aws:ecs:us-east-1:058264367679:task-definition/dev-ecos-api-td:1",
+        "TaskDefinition": { "Ref": "DevApiTaskDefinition" },
         "ServiceName": "dev-ecos-api-service",
         "SchedulingStrategy": "REPLICA",
         "DesiredCount": 1,
@@ -447,7 +447,7 @@
             "Weight": 1
           }
         ],
-        "TaskDefinition": "arn:aws:ecs:us-east-1:058264367679:task-definition/dev-ecos-ui-td:1",
+        "TaskDefinition": { "Ref": "DevWebTaskDefinition" },
         "ServiceName": "dev-ecos-ui-service",
         "SchedulingStrategy": "REPLICA",
         "DesiredCount": 1,
