@@ -151,12 +151,12 @@
           }
         },
         "ServiceConnectDefaults": {
-          "Namespace": "dev-ecos-api-ecs-cluster"
+          "Namespace": { "Ref": "DevApiECSClusterName" }
         },
         "Tags": [
           {
             "Key": "Name",
-            "Value": "dev-ecos-api-ecs-cluster"
+            "Value": { "Ref": "DevApiECSClusterName" }
           }
         ]
       }
@@ -182,12 +182,12 @@
           }
         },
         "ServiceConnectDefaults": {
-          "Namespace": "dev-ecos-web-ecs-cluster"
+          "Namespace": { "Ref": "DevWebECSClusterName" }
         },
         "Tags": [
           {
             "Key": "Name",
-            "Value": "dev-ecos-web-ecs-cluster"
+            "Value": { "Ref": "DevWebECSClusterName" }
           }
         ]
       }
@@ -380,7 +380,7 @@
     "DevApiECSService": {
       "Type": "AWS::ECS::Service",
       "Properties": {
-        "Cluster": "dev-ecos-api-ecs-cluster",
+        "Cluster": { "Ref": "DevApiECSClusterName" },
         "CapacityProviderStrategy": [
           {
             "CapacityProvider": "FARGATE",
@@ -439,7 +439,7 @@
     "DevWebECSService": {
       "Type": "AWS::ECS::Service",
       "Properties": {
-        "Cluster": "dev-ecos-web-ecs-cluster",
+        "Cluster": { "Ref": "DevWebECSClusterName" },
         "CapacityProviderStrategy": [
           {
             "CapacityProvider": "FARGATE",
