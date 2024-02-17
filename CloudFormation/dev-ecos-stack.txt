@@ -246,14 +246,14 @@
       "Properties" : {
         "ContainerDefinitions" : [
         {
-          "Name": "ecos-ui-cont",
+          "Name": "dev-ecos-web-cont",
           "Image": "058264367679.dkr.ecr.us-east-1.amazonaws.com/ecos-web-repo:latest",
           "Cpu": 0,
           "PortMappings": [
           {
-            "Name": "dev-ecos-ui-cont-8002-tcp",
-            "ContainerPort": 8002,
-            "HostPort": 8002,
+            "Name": "dev-ecos-web-cont-4321-tcp",
+            "ContainerPort": 4321,
+            "HostPort": 4321,
             "Protocol": "tcp"
           }
           ],
@@ -264,6 +264,14 @@
               "Value": "v1"
             },
             {
+              "name": "MARKETPLACE_API_KEY ",
+              "value": "FIXME:We need somewhere more secure than Git to store this"
+            },
+            {
+              "name": "MARKETPLACE_BASE_URL",
+              "value": "https://marketplace.api.healthcare.gov/api/v1"
+            },
+            {
               "Name": "ENVIRONMENT",
               "Value": "dev"
             }
@@ -272,18 +280,18 @@
           "VolumesFrom": [],
           "WorkingDirectory": "/app",
           "LogConfiguration": {
-          "LogDriver": "awslogs",
-          "Options": {
-            "awslogs-group": "/ecs/ecos-ui",
-            "awslogs-region": "us-east-1",
-            "awslogs-stream-prefix": "ecos-ui"
-          }
+            "LogDriver": "awslogs",
+            "Options": {
+              "awslogs-group": "/ecs/ecos-web",
+              "awslogs-region": "us-east-1",
+              "awslogs-stream-prefix": "ecos-web"
+            }
           }
         }
         ],
         "Cpu" : 4096,
         "ExecutionRoleArn" : "arn:aws:iam::058264367679:role/dev-ecos-ecs-task-execution-role",
-        "Family" : "dev-ecos-ui-td",
+        "Family" : "dev-ecos-web-td",
         "Memory" : 8192,
         "NetworkMode" : "awsvpc",
         "RequiresCompatibilities" : [ "FARGATE" ],
@@ -440,6 +448,12 @@
       "Type": "AWS::ECS::Service",
       "Properties": {
         "Cluster": { "Ref": "DevWebECSClusterName" },
+        "LoadBalancers": [
+          {
+            "TargetGroupArn": { "Ref": "DevECSWebTargetGroup" },
+            "ContainerName": "dev-ecos-web-cont",
+            "ContainerPort": 4321
+        ],
         "CapacityProviderStrategy": [
           {
             "CapacityProvider": "FARGATE",
@@ -448,7 +462,7 @@
           }
         ],
         "TaskDefinition": { "Ref": "DevWebTaskDefinition" },
-        "ServiceName": "dev-ecos-ui-service",
+        "ServiceName": "dev-ecos-web-service",
         "SchedulingStrategy": "REPLICA",
         "DesiredCount": 1,
         "NetworkConfiguration": {
@@ -485,7 +499,7 @@
         "Tags": [
           {
             "Key": "Name",
-            "Value": "dev-ecos-ui-service"
+            "Value": "dev-ecos-web-service"
           },
           {
             "Key": "Environment",
@@ -565,7 +579,7 @@
       "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
       "Properties": {
         "IpAddressType" : "ipv4",
-        "Name" : "dev-ecos-ui-alb",
+        "Name" : "dev-ecos-web-alb",
         "Scheme" : "internal",
         "SecurityGroups" : [
           {
