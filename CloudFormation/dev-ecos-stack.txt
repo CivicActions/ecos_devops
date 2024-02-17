@@ -195,36 +195,36 @@
     "DevApiTaskDefinition": {
       "Type" : "AWS::ECS::TaskDefinition",
       "Properties" : {
-        "containerDefinitions": [
+        "ContainerDefinitions": [
         {
-          "name": "dev-ecos-api-cont",
-          "image": "058264367679.dkr.ecr.us-east-1.amazonaws.com/ecos-api-repo:latest",
-          "cpu": 0,
-          "portMappings": [
+          "Name": "dev-ecos-api-cont",
+          "Image": "058264367679.dkr.ecr.us-east-1.amazonaws.com/ecos-api-repo:latest",
+          "Cpu": 0,
+          "PortMappings": [
             {
-              "name": "dev-ecos-api-cont-8001-tcp",
-              "containerPort": 8001,
-              "hostPort": 8001,
-              "protocol": "tcp"
+              "Name": "dev-ecos-api-cont-8001-tcp",
+              "ContainerPort": 8001,
+              "HostPort": 8001,
+              "Protocol": "tcp"
             }
           ],
-          "essential": true,
-          "environment": [
+          "Essential": true,
+          "Environment": [
             {
-              "name": "VERSION",
-              "value": "v1"
+              "Name": "VERSION",
+              "Value": "v1"
             },
             {
-              "name": "ENVIRONMENT",
-              "value": "dev"
+              "Name": "ENVIRONMENT",
+              "Value": "dev"
             }
           ],
-          "mountPoints": [],
-          "volumesFrom": [],
-          "workingDirectory": "/app",
-          "logConfiguration": {
-            "logDriver": "awslogs",
-            "options": {
+          "MountPoints": [],
+          "VolumesFrom": [],
+          "WorkingDirectory": "/app",
+          "LogConfiguration": {
+            "LogDriver": "awslogs",
+            "Options": {
               "awslogs-group": "/ecs/ecos-api",
               "awslogs-region": "us-east-1",
               "awslogs-stream-prefix": "ecos-api"
@@ -246,34 +246,34 @@
       "Properties" : {
         "ContainerDefinitions" : [
         {
-          "name": "ecos-ui-cont",
-          "image": "058264367679.dkr.ecr.us-east-1.amazonaws.com/ecos-web-repo:latest",
-          "cpu": 0,
-          "portMappings": [
+          "Name": "ecos-ui-cont",
+          "Image": "058264367679.dkr.ecr.us-east-1.amazonaws.com/ecos-web-repo:latest",
+          "Cpu": 0,
+          "PortMappings": [
           {
-            "name": "dev-ecos-ui-cont-8002-tcp",
-            "containerPort": 8002,
-            "hostPort": 8002,
-            "protocol": "tcp"
+            "Name": "dev-ecos-ui-cont-8002-tcp",
+            "ContainerPort": 8002,
+            "HostPort": 8002,
+            "Protocol": "tcp"
           }
           ],
-          "essential": true,
-          "environment": [
-          {
-            "name": "VERSION",
-            "value": "v1"
-          },
-          {
-            "name": "ENVIRONMENT",
-            "value": "dev"
-          }
+          "Essential": true,
+          "Environment": [
+            {
+              "Name": "VERSION",
+              "Value": "v1"
+            },
+            {
+              "Name": "ENVIRONMENT",
+              "Value": "dev"
+            }
           ],
-          "mountPoints": [],
-          "volumesFrom": [],
-          "workingDirectory": "/app",
-          "logConfiguration": {
-          "logDriver": "awslogs",
-          "options": {
+          "MountPoints": [],
+          "VolumesFrom": [],
+          "WorkingDirectory": "/app",
+          "LogConfiguration": {
+          "LogDriver": "awslogs",
+          "Options": {
             "awslogs-group": "/ecs/ecos-ui",
             "awslogs-region": "us-east-1",
             "awslogs-stream-prefix": "ecos-ui"
@@ -395,9 +395,9 @@
         "NetworkConfiguration": {
           "AwsvpcConfiguration": {
             "AssignPublicIp": "ENABLED",
-            "SecurityGroups": {
-              "Ref": "DevDefaultSecurityGroup"
-            },
+            "SecurityGroups": [
+              { "Ref": "DevDefaultSecurityGroup" }
+            ],
             "Subnets": [
 			  { "Ref": "DevSubnetA" },
               { "Ref": "DevSubnetB" },
@@ -454,9 +454,9 @@
         "NetworkConfiguration": {
           "AwsvpcConfiguration": {
             "AssignPublicIp": "ENABLED",
-            "SecurityGroups": {
-              "Ref": "DevDefaultSecurityGroup"
-            },
+            "SecurityGroups": [ 
+              { "Ref": "DevDefaultSecurityGroup" }
+            ],
             "Subnets": [
 			  { "Ref": "DevSubnetA" },
               { "Ref": "DevSubnetB" },
