@@ -282,12 +282,12 @@
         }
         ],
         "Cpu" : 4096,
-        "ExecutionRoleArn" : "arn:aws:iam::058264367679:role/ecos-ecs-task-execution-role",
-        "Family" : "ecos-ui-td",
+        "ExecutionRoleArn" : "arn:aws:iam::058264367679:role/dev-ecos-ecs-task-execution-role",
+        "Family" : "dev-ecos-ui-td",
         "Memory" : 8192,
         "NetworkMode" : "awsvpc",
         "RequiresCompatibilities" : [ "FARGATE" ],
-        "TaskRoleArn" : "arn:aws:iam::058264367679:role/ecos-ecs-task-role"
+        "TaskRoleArn" : "arn:aws:iam::058264367679:role/dev-ecos-ecs-task-role"
       }
     },
     "DevApiSecurityGroup": {
