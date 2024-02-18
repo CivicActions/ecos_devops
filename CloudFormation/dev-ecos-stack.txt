@@ -291,7 +291,7 @@
         ],
         "Cpu" : 4096,
         "ExecutionRoleArn" : "arn:aws:iam::058264367679:role/ecos-ecs-task-execution-role",
-        "Family" : "ecos-web-td",
+        "Family" : "ecos-ui-td",
         "Memory" : 8192,
         "NetworkMode" : "awsvpc",
         "RequiresCompatibilities" : [ "FARGATE" ],
@@ -404,6 +404,7 @@
         "Matcher" : {
           "HttpCode": "200"
         },
+        "Name" : "ecos-api-tg",
         "ProtocolVersion" : "HTTP1",
         "TargetType" : "ip",
         "UnhealthyThresholdCount" : 2
@@ -428,6 +429,7 @@
         "Matcher" : {
           "HttpCode": "200"
         },
+        "Name" : "ecos-web-tg",
         "ProtocolVersion" : "HTTP1",
         "TargetType" : "ip",
         "UnhealthyThresholdCount" : 2
@@ -539,7 +541,7 @@
           }
         ],
         "TaskDefinition": { "Ref": "ApiTaskDefinition" },
-        "ServiceName": "ecos-api-service",
+        "ServiceName": "ecos-api-svc",
         "SchedulingStrategy": "REPLICA",
         "DesiredCount": 1,
         "NetworkConfiguration": {
@@ -576,7 +578,7 @@
         "Tags": [
           {
             "Key": "Name",
-            "Value": "ecos-api-service"
+            "Value": "ecos-api-svc"
           },
           {
             "Key": "Environment",
@@ -606,7 +608,7 @@
           }
         ],
         "TaskDefinition": { "Ref": "WebTaskDefinition" },
-        "ServiceName": "ecos-web-service",
+        "ServiceName": "ecos-web-svc",
         "SchedulingStrategy": "REPLICA",
         "DesiredCount": 1,
         "NetworkConfiguration": {
@@ -643,7 +645,7 @@
         "Tags": [
           {
             "Key": "Name",
-            "Value": "ecos-web-service"
+            "Value": "ecos-web-svc"
           },
           {
             "Key": "Environment",
