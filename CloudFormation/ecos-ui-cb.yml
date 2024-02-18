@@ -1,0 +1,141 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Core resources to run on devops env"
+Metadata:
+  Generator: "ecos-ui
+Parameters:
+  env:
+    Description: Environment type (dev/test/impl/prod)
+    Type: String
+    AllowedValues:
+      - dev
+    Default: dev
+  version:
+    Description: Version number used for parameter store variables
+    Type: String
+    Default: v1
+  sourceVersion:
+    Description: 
+    Type: String
+    Default: main
+  serviceRole:
+    Description: 
+    Type: String
+    Default: arn:aws:iam::058264367679:role/service-role/codebuild-ECO-service-role
+   GithubRepoBranch:
+    Description: The git branch that will be polled for changes
+    Type: String
+    Default: "main
+
+  GitHubOAuthToken:
+    NoEcho: 'true'  
+    Type: String
+    Default: ""
+
+  GithubRepoOwner:
+    Description: The owner of the repository on GitHub
+    Type: String
+    Default: ""
+
+  GithubRepo:
+    Description: The git repository base name
+    Type: String
+    Default: "ecos_ui"
+ 
+Resources:
+  Codebuild1:
+    Type: 'AWS::CodeBuild::Project'
+    Properties:
+      Artifacts:
+        Type: NO_ARTIFACTS
+      BadgeEnabled: false
+      Cache:
+        Type: NO_CACHE
+      Description: !Sub Codebuild for ecos-ui
+      Environment:
+        Type: Linux EC2
+        Image: 'aws/codebuild/amazonlinux2-x86_64-standard:5.0'
+        ComputeType: EC2
+        EnvironmentVariables:
+          - Name:
+            Value:
+        PrivilegedMode: false
+        ImagePullCredentialsType: CODEBUILD
+      LogsConfig:
+        CloudWatchLogs:
+          GroupName:
+          Status: ENABLED
+          StreamName: 
+      Name: <ecos-ui-cb>
+      QueuedTimeoutInMinutes: 480
+      ServiceRole: 'rn:aws:iam::058264367679:role/service-role/codebuild-ECO-service-role'
+      Source:
+        Type: GITHUB_ENTERPRISE
+        Location: https://github.com/CivicActions/ecos_ui
+        GitCloneDepth: 1
+        ReportBuildStatus: false
+      SourceVersion: !Ref sourceVersion
+      TimeoutInMinutes: 20
+      
+      CodeBuildProjectDeploy:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Sub "${AWS::StackName}-deploy"
+      Description: CodePipeline serverless deployer.
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: cicd/buildspecs/deploy.yml
+      Artifacts:
+        Type: CODEPIPELINE
+      TimeoutInMinutes: 10
+      Environment:
+        ComputeType: !Ref CodeBuildEnvironmentComputeType
+        Image: !Ref CodeBuildImage
+        Type: 
+        EnvironmentVariables:
+          - Name: 
+            Value: !Ref 
+      ServiceRole:'arn:aws:iam::058264367679:role/service-role/codebuild-ECO-service-role'
+      # Pipeline for running build.
+  CodePipeline:
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      Name: !Sub "${AWS::StackName}"
+      ArtifactStore:
+        Location: !Ref BuildArtifactBucket
+        Type: GitHub
+      RestartExecutionOnUpdate: false
+      RoleArn: !GetAtt CodePipelineRole.Arn
+      Stages:
+
+        - Name: Source
+          Actions:
+            - Name: Source
+              RunOrder: 1
+              ActionTypeId:
+                Category: Source
+                Owner: ThirdParty
+                Provider: GitHub
+                Version: '1'
+              Configuration:
+                Owner: !Ref GithubRepoOwner
+                Repo: !Ref GithubRepo
+                Branch: !Ref GithubRepoBranch
+                OAuthToken: !Ref GitHubOAuthToken
+              OutputArtifacts:
+                - Name: SourceOutput
+
+        - Name: dev
+          Actions:
+            - Name: test
+              RunOrder: 1
+              ActionTypeId:
+                Category: dev
+                Owner: AWS
+                Provider: CodeBuild
+                Version: '1'
+              Configuration:
+                ProjectName: !Ref CodeBuildProjectTest
+              InputArtifacts:
+                - Name: SourceOutput
+              OutputArtifacts:
+                - Name: TestOutput
