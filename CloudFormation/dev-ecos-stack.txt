@@ -669,13 +669,13 @@
         "Ref": "DevWebECSCluster"
       }
     },
-    "ECSService": {
+    "ApiECSService": {
       "Description": "The created service.",
       "Value": {
         "Ref": "DevApiECSService"
       }
     },
-    "ECSService": {
+    "WebECSService": {
       "Description": "The created service.",
       "Value": {
         "Ref": "DevWebECSService"
