@@ -1,0 +1,58 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Core resources to run on devops env"
+Metadata:
+  Generator: "Carelle"
+Parameters:
+  env:
+    Description: Environment type (dev/test/impl/prod)
+    Type: String
+    AllowedValues:
+      - dev
+    Default: dev
+  version:
+    Description: Version number used for parameter store variables
+    Type: String
+    Default: v1
+  sourceVersion:
+    Description: 
+    Type: String
+    Default: main
+  serviceRole:
+    Description: 
+    Type: String
+    Default: <role>
+ 
+Resources:
+  Codebuild1:
+    Type: 'AWS::CodeBuild::Project'
+    Properties:
+      Artifacts:
+        Type: NO_ARTIFACTS
+      BadgeEnabled: false
+      Cache:
+        Type: NO_CACHE
+      Description: !Sub Codebuild for ecos-api-cb
+      Environment:
+        Type: Linux EC2
+        Image: 'aws/codebuild/amazonlinux2-x86_64-standard:5.0'
+        ComputeType: EC2
+        EnvironmentVariables:
+          - Name:
+            Value:
+        PrivilegedMode: false
+        ImagePullCredentialsType: CODEBUILD
+      LogsConfig:
+        CloudWatchLogs:
+          GroupName:
+          Status: ENABLED
+          StreamName: 
+      Name: <ecos-api-cb>
+      QueuedTimeoutInMinutes: 480
+      ServiceRole: arn:aws:iam::058264367679:role/service-role/codebuild-ECO-service-role
+      Source:
+        Type: GITHUB_ENTERPRISE
+        Location: <https://github.com/CivicActions/ecos_api>
+        GitCloneDepth: 1
+        ReportBuildStatus: false
+      SourceVersion: !Ref sourceVersion
+      TimeoutInMinutes: 20
