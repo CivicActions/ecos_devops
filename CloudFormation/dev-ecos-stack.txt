@@ -202,9 +202,9 @@
           "Cpu": 0,
           "PortMappings": [
             {
-              "Name": "dev-ecos-api-cont-8001-tcp",
-              "ContainerPort": 8001,
-              "HostPort": 8001,
+              "Name": "dev-ecos-api-cont-4321-tcp",
+              "ContainerPort": 4321,
+              "HostPort": 4321,
               "Protocol": "tcp"
             }
           ],
@@ -490,9 +490,8 @@
           }
         ],
         "LoadBalancerArn" : { "Ref": "DevECSApiLoadBalancer" },
-        "MutualAuthentication" : MutualAuthentication,
         "Port" : 80,
-        "Protocol" : HTTP
+        "Protocol" : "HTTP"
       }
     },
 	"DevECSWebListener": {
@@ -516,9 +515,8 @@
           }
         ],
         "LoadBalancerArn" : { "Ref": "DevECSWebLoadBalancer" },
-        "MutualAuthentication" : MutualAuthentication,
         "Port" : 80,
-        "Protocol" : HTTP
+        "Protocol" : "HTTP"
       }
     },
 	"DevApiECSService": {
@@ -657,26 +655,26 @@
     }
   },
   "Outputs": {
-    "ECSCluster": {
-      "Description": "The created cluster.",
+    "ApiECSCluster": {
+      "Description": "The created API cluster.",
       "Value": {
         "Ref": "DevApiECSCluster"
       }
     },
-    "ECSCluster": {
-      "Description": "The created cluster.",
+    "WebECSCluster": {
+      "Description": "The created UI cluster.",
       "Value": {
         "Ref": "DevWebECSCluster"
       }
     },
     "ApiECSService": {
-      "Description": "The created service.",
+      "Description": "The created API service.",
       "Value": {
         "Ref": "DevApiECSService"
       }
     },
     "WebECSService": {
-      "Description": "The created service.",
+      "Description": "The created UI service.",
       "Value": {
         "Ref": "DevWebECSService"
       }
