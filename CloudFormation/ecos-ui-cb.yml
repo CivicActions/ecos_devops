@@ -1,14 +1,14 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: "Core resources to run on devops env"
 Metadata:
-  Generator: "ecos-ui
+  Generator: "ecos-ui"
 Parameters:
   env:
     Description: Environment type (dev/test/impl/prod)
     Type: String
     AllowedValues:
       - dev
-    Default: dev
+    Default: "dev"
   version:
     Description: Version number used for parameter store variables
     Type: String
@@ -16,7 +16,7 @@ Parameters:
   sourceVersion:
     Description: 
     Type: String
-    Default: main
+    Default: "main"
   serviceRole:
     Description: 
     Type: String
@@ -24,7 +24,7 @@ Parameters:
    GithubRepoBranch:
     Description: The git branch that will be polled for changes
     Type: String
-    Default: "main
+    Default: "main"
 
   GitHubOAuthToken:
     NoEcho: 'true'  
@@ -42,6 +42,17 @@ Parameters:
     Default: "ecos_ui"
  
 Resources:
+  # IAM role for codebuild project. Should give access all AWS resources needed by build and tests run by build.
+  CodeBuildRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              Service: codebuild.amazonaws.com
   Codebuild1:
     Type: 'AWS::CodeBuild::Project'
     Properties:
@@ -69,14 +80,14 @@ Resources:
       QueuedTimeoutInMinutes: 480
       ServiceRole: 'rn:aws:iam::058264367679:role/service-role/codebuild-ECO-service-role'
       Source:
-        Type: GITHUB_ENTERPRISE
-        Location: https://github.com/CivicActions/ecos_ui
+        Type: GITHUB
+        Location: https://github.com/CivicActions/ecos_devops/tree/main/CloudFormation
         GitCloneDepth: 1
         ReportBuildStatus: false
       SourceVersion: !Ref sourceVersion
       TimeoutInMinutes: 20
       
-      CodeBuildProjectDeploy:
+   CodeBuildProjectDeploy:
     Type: AWS::CodeBuild::Project
     Properties:
       Name: !Sub "${AWS::StackName}-deploy"
@@ -90,11 +101,11 @@ Resources:
       Environment:
         ComputeType: !Ref CodeBuildEnvironmentComputeType
         Image: !Ref CodeBuildImage
-        Type: 
+        Type: LINUX_CONTAINER
         EnvironmentVariables:
           - Name: 
             Value: !Ref 
-      ServiceRole:'arn:aws:iam::058264367679:role/service-role/codebuild-ECO-service-role'
+      ServiceRole:!GetAtt CodeBuildRole.Arn
       # Pipeline for running build.
   CodePipeline:
     Type: AWS::CodePipeline::Pipeline
@@ -124,12 +135,12 @@ Resources:
               OutputArtifacts:
                 - Name: SourceOutput
 
-        - Name: dev
+        - Name: test
           Actions:
             - Name: test
               RunOrder: 1
               ActionTypeId:
-                Category: dev
+                Category: test
                 Owner: AWS
                 Provider: CodeBuild
                 Version: '1'
