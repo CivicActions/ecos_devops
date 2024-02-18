@@ -2,26 +2,26 @@
   "AWSTemplateFormatVersion": "2010-09-09",
   "Description": "Template to create core ECOS resources.",
   "Parameters": {
-    "DevApiECSClusterName": {
+    "ApiECSClusterName": {
       "Type": "String",
       "Description": "Specifies the ECS Cluster Name with which the resources would be associated",
-      "Default": "dev-ecos-api-ecs-cluster"
+      "Default": "ecos-api-ecs-cluster"
     },
-    "DevWebECSClusterName": {
+    "WebECSClusterName": {
       "Type": "String",
       "Description": "Specifies the ECS Cluster Name with which the resources would be associated",
-      "Default": "dev-ecos-web-ecs-cluster"
+      "Default": "ecos-web-ecs-cluster"
     }
   },
   "Resources": {
-    "DevECSVPC": {
+    "ECSVPC": {
       "Type" : "AWS::EC2::VPC",
       "Properties" : {
         "CidrBlock" : "172.31.0.0/16",
         "InstanceTenancy" : "default"
       }
     },
-    "DevSubnetA": {
+    "SubnetA": {
       "Type" : "AWS::EC2::Subnet",
       "Properties" : {
         "AvailabilityZone" : "us-east-1a",
@@ -35,11 +35,11 @@
           "EnableResourceNameDnsAAAARecord": false
         },
         "VpcId" : {
-          "Ref": "DevECSVPC"
+          "Ref": "ECSVPC"
         }
       }
 	},
-    "DevSubnetB": {
+    "SubnetB": {
       "Type" : "AWS::EC2::Subnet",
       "Properties" : {
         "AvailabilityZone" : "us-east-1b",
@@ -53,11 +53,11 @@
           "EnableResourceNameDnsAAAARecord": false
         },
         "VpcId" : {
-          "Ref": "DevECSVPC"
+          "Ref": "ECSVPC"
         }
       }
 	},
-    "DevSubnetC": {
+    "SubnetC": {
       "Type" : "AWS::EC2::Subnet",
       "Properties" : {
         "AvailabilityZone" : "us-east-1c",
@@ -71,11 +71,11 @@
           "EnableResourceNameDnsAAAARecord": false
         },
         "VpcId" : {
-          "Ref": "DevECSVPC"
+          "Ref": "ECSVPC"
         }
       }
 	},
-    "DevSubnetD": {
+    "SubnetD": {
       "Type" : "AWS::EC2::Subnet",
       "Properties" : {
         "AvailabilityZone" : "us-east-1d",
@@ -89,11 +89,11 @@
           "EnableResourceNameDnsAAAARecord": false
         },
         "VpcId" : {
-          "Ref": "DevECSVPC"
+          "Ref": "ECSVPC"
         }
       }
 	},
-    "DevSubnetE": {
+    "SubnetE": {
       "Type" : "AWS::EC2::Subnet",
       "Properties" : {
         "AvailabilityZone" : "us-east-1e",
@@ -107,11 +107,11 @@
           "EnableResourceNameDnsAAAARecord": false
         },
         "VpcId" : {
-          "Ref": "DevECSVPC"
+          "Ref": "ECSVPC"
         }
       }
 	},
-	"DevSubnetF": {
+	"SubnetF": {
       "Type" : "AWS::EC2::Subnet",
       "Properties" : {
         "AvailabilityZone" : "us-east-1f",
@@ -125,15 +125,15 @@
           "EnableResourceNameDnsAAAARecord": false
         },
         "VpcId" : {
-          "Ref": "DevECSVPC"
+          "Ref": "ECSVPC"
         }
       }
 	},
-    "DevApiECSCluster": {
+    "ApiECSCluster": {
       "Type": "AWS::ECS::Cluster",
       "Properties": {
         "ClusterName": {
-          "Ref": "DevApiECSClusterName"
+          "Ref": "ApiECSClusterName"
         },  
         "CapacityProviders": [
           "FARGATE",
@@ -151,21 +151,21 @@
           }
         },
         "ServiceConnectDefaults": {
-          "Namespace": { "Ref": "DevApiECSClusterName" }
+          "Namespace": { "Ref": "ApiECSClusterName" }
         },
         "Tags": [
           {
             "Key": "Name",
-            "Value": { "Ref": "DevApiECSClusterName" }
+            "Value": { "Ref": "ApiECSClusterName" }
           }
         ]
       }
     },
-    "DevWebECSCluster": {
+    "WebECSCluster": {
       "Type": "AWS::ECS::Cluster",
       "Properties": {
         "ClusterName": {
-          "Ref": "DevWebECSClusterName"
+          "Ref": "WebECSClusterName"
         },
         "CapacityProviders": [
           "FARGATE",
@@ -182,27 +182,27 @@
           }
         },
         "ServiceConnectDefaults": {
-          "Namespace": { "Ref": "DevWebECSClusterName" }
+          "Namespace": { "Ref": "WebECSClusterName" }
         },
         "Tags": [
           {
             "Key": "Name",
-            "Value": { "Ref": "DevWebECSClusterName" }
+            "Value": { "Ref": "WebECSClusterName" }
           }
         ]
       }
     },
-    "DevApiTaskDefinition": {
+    "ApiTaskDefinition": {
       "Type" : "AWS::ECS::TaskDefinition",
       "Properties" : {
         "ContainerDefinitions": [
         {
-          "Name": "dev-ecos-api-cont",
+          "Name": "ecos-api-cont",
           "Image": "058264367679.dkr.ecr.us-east-1.amazonaws.com/ecos-api-repo:latest",
           "Cpu": 0,
           "PortMappings": [
             {
-              "Name": "dev-ecos-api-cont-4321-tcp",
+              "Name": "ecos-api-cont-4321-tcp",
               "ContainerPort": 4321,
               "HostPort": 4321,
               "Protocol": "tcp"
@@ -233,25 +233,25 @@
         }
         ],
         "Cpu" : 4096,
-        "ExecutionRoleArn" : "arn:aws:iam::058264367679:role/dev-ecos-ecs-task-execution-role",
-        "Family" : "dev-ecos-api-td",
+        "ExecutionRoleArn" : "arn:aws:iam::058264367679:role/ecos-ecs-task-execution-role",
+        "Family" : "ecos-api-td",
         "Memory" : 8192,
         "NetworkMode" : "awsvpc",
         "RequiresCompatibilities" : [ "FARGATE" ],
-        "TaskRoleArn" : "arn:aws:iam::058264367679:role/dev-ecos-ecs-task-role"
+        "TaskRoleArn" : "arn:aws:iam::058264367679:role/ecos-ecs-task-role"
       }
     },
-    "DevWebTaskDefinition": {
+    "WebTaskDefinition": {
       "Type" : "AWS::ECS::TaskDefinition",
       "Properties" : {
         "ContainerDefinitions" : [
         {
-          "Name": "dev-ecos-web-cont",
+          "Name": "ecos-web-cont",
           "Image": "058264367679.dkr.ecr.us-east-1.amazonaws.com/ecos-web-repo:latest",
           "Cpu": 0,
           "PortMappings": [
           {
-            "Name": "dev-ecos-web-cont-4321-tcp",
+            "Name": "ecos-web-cont-4321-tcp",
             "ContainerPort": 4321,
             "HostPort": 4321,
             "Protocol": "tcp"
@@ -290,19 +290,19 @@
         }
         ],
         "Cpu" : 4096,
-        "ExecutionRoleArn" : "arn:aws:iam::058264367679:role/dev-ecos-ecs-task-execution-role",
-        "Family" : "dev-ecos-web-td",
+        "ExecutionRoleArn" : "arn:aws:iam::058264367679:role/ecos-ecs-task-execution-role",
+        "Family" : "ecos-web-td",
         "Memory" : 8192,
         "NetworkMode" : "awsvpc",
         "RequiresCompatibilities" : [ "FARGATE" ],
-        "TaskRoleArn" : "arn:aws:iam::058264367679:role/dev-ecos-ecs-task-role"
+        "TaskRoleArn" : "arn:aws:iam::058264367679:role/ecos-ecs-task-role"
       }
     },
-    "DevApiSecurityGroup": {
+    "ApiSecurityGroup": {
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
-        "GroupDescription" : "dev-ecos-api-alb-sg",
-        "GroupName" : "dev-ecos-api-alb-sg",
+        "GroupDescription" : "ecos-api-alb-sg",
+        "GroupName" : "ecos-api-alb-sg",
         "SecurityGroupEgress" : [
           {
             "CidrIp" : "0.0.0.0/0",
@@ -318,7 +318,7 @@
         "Tags": [
           {
             "Key": "Name",
-            "Value": "dev-ecos-api-alb-sg"
+            "Value": "ecos-api-alb-sg"
           },
           {
             "Key": "Environment",
@@ -326,15 +326,15 @@
           }
         ],
         "VpcId" :  {
-          "Ref": "DevECSVPC"
+          "Ref": "ECSVPC"
         }
       }
     },
-    "DevWebSecurityGroup": {
+    "WebSecurityGroup": {
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
-        "GroupDescription" : "dev-ecos-web-alb-sg",
-        "GroupName" : "dev-ecos-web-alb-sg",
+        "GroupDescription" : "ecos-web-alb-sg",
+        "GroupName" : "ecos-web-alb-sg",
         "SecurityGroupEgress" : [
           {
             "CidrIp" : "0.0.0.0/0",
@@ -352,7 +352,7 @@
         "Tags": [
           {
             "Key": "Name",
-            "Value": "dev-ecos-web-alb-sg"
+            "Value": "ecos-web-alb-sg"
           },
           {
             "Key": "Environment",
@@ -360,15 +360,15 @@
           }
         ],
         "VpcId" :  {
-          "Ref": "DevECSVPC"
+          "Ref": "ECSVPC"
         }
       }
     },
-    "DevDefaultSecurityGroup": {
+    "DefaultSecurityGroup": {
       "Type" : "AWS::EC2::SecurityGroup",
       "Properties" : {
         "GroupDescription" : "default VPC security group",
-        "GroupName" : "dev-default",
+        "GroupName" : "default",
         "SecurityGroupEgress": [
           {
             "CidrIp" : "0.0.0.0/0",
@@ -381,17 +381,17 @@
           }
         ],
         "VpcId" :  {
-          "Ref": "DevECSVPC"
+          "Ref": "ECSVPC"
         }
       }
     },
-    "DevECSApiTargetGroup": {
+    "ECSApiTargetGroup": {
       "Type" : "AWS::ElasticLoadBalancingV2::TargetGroup",
       "Properties" : {
         "Protocol" : "HTTP",
         "Port" : 80,
         "VpcId" :  {
-          "Ref": "DevECSVPC"
+          "Ref": "ECSVPC"
          },
         "HealthCheckEnabled" : true,
         "HealthCheckIntervalSeconds" : 120,
@@ -409,13 +409,13 @@
         "UnhealthyThresholdCount" : 2
       }
     },
-    "DevECSWebTargetGroup": {
+    "ECSWebTargetGroup": {
       "Type" : "AWS::ElasticLoadBalancingV2::TargetGroup",
       "Properties" : {
         "Protocol" : "HTTP",
         "Port" : 80,
         "VpcId" :  {
-          "Ref": "DevECSVPC"
+          "Ref": "ECSVPC"
         },
         "HealthCheckEnabled" : true,
         "HealthCheckIntervalSeconds" : 120,
@@ -433,53 +433,53 @@
         "UnhealthyThresholdCount" : 2
       }
     },
-    "DevECSApiLoadBalancer": {
+    "ECSApiLoadBalancer": {
       "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
       "Properties": {
         "IpAddressType" : "ipv4",
-        "Name" : "dev-ecos-api-alb",
+        "Name" : "ecos-api-alb",
         "Scheme" : "internal",
         "SecurityGroups" : [
           {
-            "Ref": "DevApiSecurityGroup"
+            "Ref": "ApiSecurityGroup"
           }
         ],
         "Subnets" :  [
-          { "Ref": "DevSubnetA" },
-          { "Ref": "DevSubnetD" }
+          { "Ref": "SubnetA" },
+          { "Ref": "SubnetD" }
         ],
         "Type" : "application"
       }
     },
-    "DevECSWebLoadBalancer": {
+    "ECSWebLoadBalancer": {
       "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
       "Properties": {
         "IpAddressType" : "ipv4",
-        "Name" : "dev-ecos-web-alb",
+        "Name" : "ecos-web-alb",
         "Scheme" : "internal",
         "SecurityGroups" : [
           {
-            "Ref": "DevWebSecurityGroup"
+            "Ref": "WebSecurityGroup"
           }
         ],
         "Subnets" :  [
-          { "Ref": "DevSubnetA" },
-          { "Ref": "DevSubnetD" }
+          { "Ref": "SubnetA" },
+          { "Ref": "SubnetD" }
         ],
         "Type" : "application"
       }
     },
-	"DevECSApiListener": {
+	"ECSApiListener": {
       "Type" : "AWS::ElasticLoadBalancingV2::Listener",
       "Properties" : {
         "DefaultActions": [
           {
             "Type": "forward",
-            "TargetGroupArn": { "Ref": "DevECSApiTargetGroup" },
+            "TargetGroupArn": { "Ref": "ECSApiTargetGroup" },
             "ForwardConfig": {
               "TargetGroups": [
                 {
-                  "TargetGroupArn": { "Ref": "DevECSApiTargetGroup" },
+                  "TargetGroupArn": { "Ref": "ECSApiTargetGroup" },
                   "Weight": 1
                 }
               ],
@@ -489,22 +489,22 @@
             }
           }
         ],
-        "LoadBalancerArn" : { "Ref": "DevECSApiLoadBalancer" },
+        "LoadBalancerArn" : { "Ref": "ECSApiLoadBalancer" },
         "Port" : 80,
         "Protocol" : "HTTP"
       }
     },
-	"DevECSWebListener": {
+	"ECSWebListener": {
       "Type" : "AWS::ElasticLoadBalancingV2::Listener",
       "Properties" : {
         "DefaultActions": [
           {
             "Type": "forward",
-            "TargetGroupArn": { "Ref": "DevECSWebTargetGroup" },
+            "TargetGroupArn": { "Ref": "ECSWebTargetGroup" },
             "ForwardConfig": {
               "TargetGroups": [
                 {
-                  "TargetGroupArn": { "Ref": "DevECSWebTargetGroup" },
+                  "TargetGroupArn": { "Ref": "ECSWebTargetGroup" },
                   "Weight": 1
                 }
               ],
@@ -514,20 +514,20 @@
             }
           }
         ],
-        "LoadBalancerArn" : { "Ref": "DevECSWebLoadBalancer" },
+        "LoadBalancerArn" : { "Ref": "ECSWebLoadBalancer" },
         "Port" : 80,
         "Protocol" : "HTTP"
       }
     },
-	"DevApiECSService": {
+	"ApiECSService": {
       "Type": "AWS::ECS::Service",
-	  "DependsOn": "DevECSApiListener",
+	  "DependsOn": "ECSApiListener",
       "Properties": {
-        "Cluster": { "Ref": "DevApiECSClusterName" },
+        "Cluster": { "Ref": "ApiECSClusterName" },
         "LoadBalancers": [
           {
-            "TargetGroupArn": { "Ref": "DevECSApiTargetGroup" },
-            "ContainerName": "dev-ecos-api-cont",
+            "TargetGroupArn": { "Ref": "ECSApiTargetGroup" },
+            "ContainerName": "ecos-api-cont",
             "ContainerPort": 4321
           }
         ],
@@ -538,23 +538,23 @@
             "Weight": 1
           }
         ],
-        "TaskDefinition": { "Ref": "DevApiTaskDefinition" },
-        "ServiceName": "dev-ecos-api-service",
+        "TaskDefinition": { "Ref": "ApiTaskDefinition" },
+        "ServiceName": "ecos-api-service",
         "SchedulingStrategy": "REPLICA",
         "DesiredCount": 1,
         "NetworkConfiguration": {
           "AwsvpcConfiguration": {
             "AssignPublicIp": "ENABLED",
             "SecurityGroups": [
-              { "Ref": "DevDefaultSecurityGroup" }
+              { "Ref": "DefaultSecurityGroup" }
             ],
             "Subnets": [
-			  { "Ref": "DevSubnetA" },
-              { "Ref": "DevSubnetB" },
-              { "Ref": "DevSubnetC" },
-              { "Ref": "DevSubnetD" },
-              { "Ref": "DevSubnetE" },
-              { "Ref": "DevSubnetF" }
+			  { "Ref": "SubnetA" },
+              { "Ref": "SubnetB" },
+              { "Ref": "SubnetC" },
+              { "Ref": "SubnetD" },
+              { "Ref": "SubnetE" },
+              { "Ref": "SubnetF" }
             ]
           }
         },
@@ -576,7 +576,7 @@
         "Tags": [
           {
             "Key": "Name",
-            "Value": "dev-ecos-api-service"
+            "Value": "ecos-api-service"
           },
           {
             "Key": "Environment",
@@ -586,15 +586,15 @@
         "EnableECSManagedTags": true
       }
     },
-    "DevWebECSService": {
+    "WebECSService": {
       "Type": "AWS::ECS::Service",
-	  "DependsOn": "DevECSWebListener",
+	  "DependsOn": "ECSWebListener",
       "Properties": {
-        "Cluster": { "Ref": "DevWebECSClusterName" },
+        "Cluster": { "Ref": "WebECSClusterName" },
         "LoadBalancers": [
           {
-            "TargetGroupArn": { "Ref": "DevECSWebTargetGroup" },
-            "ContainerName": "dev-ecos-web-cont",
+            "TargetGroupArn": { "Ref": "ECSWebTargetGroup" },
+            "ContainerName": "ecos-web-cont",
             "ContainerPort": 4321
           }
         ],
@@ -605,23 +605,23 @@
             "Weight": 1
           }
         ],
-        "TaskDefinition": { "Ref": "DevWebTaskDefinition" },
-        "ServiceName": "dev-ecos-web-service",
+        "TaskDefinition": { "Ref": "WebTaskDefinition" },
+        "ServiceName": "ecos-web-service",
         "SchedulingStrategy": "REPLICA",
         "DesiredCount": 1,
         "NetworkConfiguration": {
           "AwsvpcConfiguration": {
             "AssignPublicIp": "ENABLED",
             "SecurityGroups": [ 
-              { "Ref": "DevDefaultSecurityGroup" }
+              { "Ref": "DefaultSecurityGroup" }
             ],
             "Subnets": [
-			  { "Ref": "DevSubnetA" },
-              { "Ref": "DevSubnetB" },
-              { "Ref": "DevSubnetC" },
-              { "Ref": "DevSubnetD" },
-              { "Ref": "DevSubnetE" },
-              { "Ref": "DevSubnetF" }
+			  { "Ref": "SubnetA" },
+              { "Ref": "SubnetB" },
+              { "Ref": "SubnetC" },
+              { "Ref": "SubnetD" },
+              { "Ref": "SubnetE" },
+              { "Ref": "SubnetF" }
             ]
           }
         },
@@ -643,7 +643,7 @@
         "Tags": [
           {
             "Key": "Name",
-            "Value": "dev-ecos-web-service"
+            "Value": "ecos-web-service"
           },
           {
             "Key": "Environment",
@@ -658,25 +658,25 @@
     "ApiECSCluster": {
       "Description": "The created API cluster.",
       "Value": {
-        "Ref": "DevApiECSCluster"
+        "Ref": "ApiECSCluster"
       }
     },
     "WebECSCluster": {
       "Description": "The created UI cluster.",
       "Value": {
-        "Ref": "DevWebECSCluster"
+        "Ref": "WebECSCluster"
       }
     },
     "ApiECSService": {
       "Description": "The created API service.",
       "Value": {
-        "Ref": "DevApiECSService"
+        "Ref": "ApiECSService"
       }
     },
     "WebECSService": {
       "Description": "The created UI service.",
       "Value": {
-        "Ref": "DevWebECSService"
+        "Ref": "WebECSService"
       }
     }
   }
