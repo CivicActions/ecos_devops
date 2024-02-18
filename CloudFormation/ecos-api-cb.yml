@@ -82,7 +82,7 @@ Resources:
       ServiceRole: 'rn:aws:iam::058264367679:role/service-role/codebuild-ECO-service-role'
       Source:
         Type: GITHUB
-        Location:'https://github.com/CivicActions/ecos_devops/tree/main/CloudFormation'
+        Location:'https://github.com/CivicActions/ecos_api/'
         GitCloneDepth: 1
         ReportBuildStatus: false
       SourceVersion: !Ref sourceVersion
