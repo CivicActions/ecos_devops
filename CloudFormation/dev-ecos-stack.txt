@@ -129,7 +129,7 @@
         }
       }
 	},
-    "DevApiECS": {
+    "DevApiECSCluster": {
       "Type": "AWS::ECS::Cluster",
       "Properties": {
         "ClusterName": {
@@ -264,12 +264,12 @@
               "Value": "v1"
             },
             {
-              "name": "MARKETPLACE_API_KEY ",
-              "value": "FIXME:We need somewhere more secure than Git to store this"
+              "Name": "MARKETPLACE_API_KEY ",
+              "Value": "FIXME:We need somewhere more secure than Git to store this"
             },
             {
-              "name": "MARKETPLACE_BASE_URL",
-              "value": "https://marketplace.api.healthcare.gov/api/v1"
+              "Name": "MARKETPLACE_BASE_URL",
+              "Value": "https://marketplace.api.healthcare.gov/api/v1"
             },
             {
               "Name": "ENVIRONMENT",
@@ -385,130 +385,6 @@
         }
       }
     },
-    "DevApiECSService": {
-      "Type": "AWS::ECS::Service",
-      "Properties": {
-        "Cluster": { "Ref": "DevApiECSClusterName" },
-        "CapacityProviderStrategy": [
-          {
-            "CapacityProvider": "FARGATE",
-            "Base": 0,
-            "Weight": 1
-          }
-        ],
-        "TaskDefinition": { "Ref": "DevApiTaskDefinition" },
-        "ServiceName": "dev-ecos-api-service",
-        "SchedulingStrategy": "REPLICA",
-        "DesiredCount": 1,
-        "NetworkConfiguration": {
-          "AwsvpcConfiguration": {
-            "AssignPublicIp": "ENABLED",
-            "SecurityGroups": [
-              { "Ref": "DevDefaultSecurityGroup" }
-            ],
-            "Subnets": [
-			  { "Ref": "DevSubnetA" },
-              { "Ref": "DevSubnetB" },
-              { "Ref": "DevSubnetC" },
-              { "Ref": "DevSubnetD" },
-              { "Ref": "DevSubnetE" },
-              { "Ref": "DevSubnetF" }
-            ]
-          }
-        },
-        "PlatformVersion": "LATEST",
-        "DeploymentConfiguration": {
-          "MaximumPercent": 200,
-          "MinimumHealthyPercent": 100,
-          "DeploymentCircuitBreaker": {
-            "Enable": true,
-            "Rollback": true
-          }
-        },
-        "DeploymentController": {
-          "Type": "ECS"
-        },
-        "ServiceConnectConfiguration": {
-          "Enabled": false
-        },
-        "Tags": [
-          {
-            "Key": "Name",
-            "Value": "dev-ecos-api-service"
-          },
-          {
-            "Key": "Environment",
-            "Value": "dev"
-          }
-        ],
-        "EnableECSManagedTags": true
-      }
-    },
-    "DevWebECSService": {
-      "Type": "AWS::ECS::Service",
-      "Properties": {
-        "Cluster": { "Ref": "DevWebECSClusterName" },
-        "LoadBalancers": [
-          {
-            "TargetGroupArn": { "Ref": "DevECSWebTargetGroup" },
-            "ContainerName": "dev-ecos-web-cont",
-            "ContainerPort": 4321
-        ],
-        "CapacityProviderStrategy": [
-          {
-            "CapacityProvider": "FARGATE",
-            "Base": 0,
-            "Weight": 1
-          }
-        ],
-        "TaskDefinition": { "Ref": "DevWebTaskDefinition" },
-        "ServiceName": "dev-ecos-web-service",
-        "SchedulingStrategy": "REPLICA",
-        "DesiredCount": 1,
-        "NetworkConfiguration": {
-          "AwsvpcConfiguration": {
-            "AssignPublicIp": "ENABLED",
-            "SecurityGroups": [ 
-              { "Ref": "DevDefaultSecurityGroup" }
-            ],
-            "Subnets": [
-			  { "Ref": "DevSubnetA" },
-              { "Ref": "DevSubnetB" },
-              { "Ref": "DevSubnetC" },
-              { "Ref": "DevSubnetD" },
-              { "Ref": "DevSubnetE" },
-              { "Ref": "DevSubnetF" }
-            ]
-          }
-        },
-        "PlatformVersion": "LATEST",
-        "DeploymentConfiguration": {
-          "MaximumPercent": 200,
-          "MinimumHealthyPercent": 100,
-          "DeploymentCircuitBreaker": {
-            "Enable": true,
-            "Rollback": true
-          }
-        },
-        "DeploymentController": {
-          "Type": "ECS"
-        },
-        "ServiceConnectConfiguration": {
-          "Enabled": false
-        },
-        "Tags": [
-          {
-            "Key": "Name",
-            "Value": "dev-ecos-web-service"
-          },
-          {
-            "Key": "Environment",
-            "Value": "dev"
-          }
-        ],
-        "EnableECSManagedTags": true
-      }
-    },
     "DevECSApiTargetGroup": {
       "Type" : "AWS::ElasticLoadBalancingV2::TargetGroup",
       "Properties" : {
@@ -591,6 +467,192 @@
           { "Ref": "DevSubnetD" }
         ],
         "Type" : "application"
+      }
+    },
+	"DevECSApiListener": {
+      "Type" : "AWS::ElasticLoadBalancingV2::Listener",
+      "Properties" : {
+        "DefaultActions": [
+          {
+            "Type": "forward",
+            "TargetGroupArn": { "Ref": "DevECSApiTargetGroup" },
+            "ForwardConfig": {
+              "TargetGroups": [
+                {
+                  "TargetGroupArn": { "Ref": "DevECSApiTargetGroup" },
+                  "Weight": 1
+                }
+              ],
+              "TargetGroupStickinessConfig": {
+                "Enabled": false
+              }
+            }
+          }
+        ],
+        "LoadBalancerArn" : { "Ref": "DevECSApiLoadBalancer" },
+        "MutualAuthentication" : MutualAuthentication,
+        "Port" : 80,
+        "Protocol" : HTTP
+      }
+    },
+	"DevECSWebListener": {
+      "Type" : "AWS::ElasticLoadBalancingV2::Listener",
+      "Properties" : {
+        "DefaultActions": [
+          {
+            "Type": "forward",
+            "TargetGroupArn": { "Ref": "DevECSWebTargetGroup" },
+            "ForwardConfig": {
+              "TargetGroups": [
+                {
+                  "TargetGroupArn": { "Ref": "DevECSWebTargetGroup" },
+                  "Weight": 1
+                }
+              ],
+              "TargetGroupStickinessConfig": {
+                "Enabled": false
+              }
+            }
+          }
+        ],
+        "LoadBalancerArn" : { "Ref": "DevECSWebLoadBalancer" },
+        "MutualAuthentication" : MutualAuthentication,
+        "Port" : 80,
+        "Protocol" : HTTP
+      }
+    },
+	"DevApiECSService": {
+      "Type": "AWS::ECS::Service",
+	  "DependsOn": "DevECSApiListener",
+      "Properties": {
+        "Cluster": { "Ref": "DevApiECSClusterName" },
+        "LoadBalancers": [
+          {
+            "TargetGroupArn": { "Ref": "DevECSApiTargetGroup" },
+            "ContainerName": "dev-ecos-api-cont",
+            "ContainerPort": 4321
+          }
+        ],
+        "CapacityProviderStrategy": [
+          {
+            "CapacityProvider": "FARGATE",
+            "Base": 0,
+            "Weight": 1
+          }
+        ],
+        "TaskDefinition": { "Ref": "DevApiTaskDefinition" },
+        "ServiceName": "dev-ecos-api-service",
+        "SchedulingStrategy": "REPLICA",
+        "DesiredCount": 1,
+        "NetworkConfiguration": {
+          "AwsvpcConfiguration": {
+            "AssignPublicIp": "ENABLED",
+            "SecurityGroups": [
+              { "Ref": "DevDefaultSecurityGroup" }
+            ],
+            "Subnets": [
+			  { "Ref": "DevSubnetA" },
+              { "Ref": "DevSubnetB" },
+              { "Ref": "DevSubnetC" },
+              { "Ref": "DevSubnetD" },
+              { "Ref": "DevSubnetE" },
+              { "Ref": "DevSubnetF" }
+            ]
+          }
+        },
+        "PlatformVersion": "LATEST",
+        "DeploymentConfiguration": {
+          "MaximumPercent": 200,
+          "MinimumHealthyPercent": 100,
+          "DeploymentCircuitBreaker": {
+            "Enable": true,
+            "Rollback": true
+          }
+        },
+        "DeploymentController": {
+          "Type": "ECS"
+        },
+        "ServiceConnectConfiguration": {
+          "Enabled": false
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "dev-ecos-api-service"
+          },
+          {
+            "Key": "Environment",
+            "Value": "dev"
+          }
+        ],
+        "EnableECSManagedTags": true
+      }
+    },
+    "DevWebECSService": {
+      "Type": "AWS::ECS::Service",
+	  "DependsOn": "DevECSWebListener",
+      "Properties": {
+        "Cluster": { "Ref": "DevWebECSClusterName" },
+        "LoadBalancers": [
+          {
+            "TargetGroupArn": { "Ref": "DevECSWebTargetGroup" },
+            "ContainerName": "dev-ecos-web-cont",
+            "ContainerPort": 4321
+          }
+        ],
+        "CapacityProviderStrategy": [
+          {
+            "CapacityProvider": "FARGATE",
+            "Base": 0,
+            "Weight": 1
+          }
+        ],
+        "TaskDefinition": { "Ref": "DevWebTaskDefinition" },
+        "ServiceName": "dev-ecos-web-service",
+        "SchedulingStrategy": "REPLICA",
+        "DesiredCount": 1,
+        "NetworkConfiguration": {
+          "AwsvpcConfiguration": {
+            "AssignPublicIp": "ENABLED",
+            "SecurityGroups": [ 
+              { "Ref": "DevDefaultSecurityGroup" }
+            ],
+            "Subnets": [
+			  { "Ref": "DevSubnetA" },
+              { "Ref": "DevSubnetB" },
+              { "Ref": "DevSubnetC" },
+              { "Ref": "DevSubnetD" },
+              { "Ref": "DevSubnetE" },
+              { "Ref": "DevSubnetF" }
+            ]
+          }
+        },
+        "PlatformVersion": "LATEST",
+        "DeploymentConfiguration": {
+          "MaximumPercent": 200,
+          "MinimumHealthyPercent": 100,
+          "DeploymentCircuitBreaker": {
+            "Enable": true,
+            "Rollback": true
+          }
+        },
+        "DeploymentController": {
+          "Type": "ECS"
+        },
+        "ServiceConnectConfiguration": {
+          "Enabled": false
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "dev-ecos-web-service"
+          },
+          {
+            "Key": "Environment",
+            "Value": "dev"
+          }
+        ],
+        "EnableECSManagedTags": true
       }
     }
   },
