@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: "Core resources to run on devops env"
 Metadata:
-  Generator: "ecos-api
+  Generator: "ecos-api"
 Parameters:
   env:
     Description: Environment type (dev/test/impl/prod)
@@ -24,7 +24,7 @@ Parameters:
    GithubRepoBranch:
     Description: The git branch that will be polled for changes
     Type: String
-    Default: "main
+    Default: "main"
 
   GitHubOAuthToken:
     NoEcho: 'true'  
@@ -39,9 +39,34 @@ Parameters:
   GithubRepo:
     Description: The git repository base name
     Type: String
-    Default: "ecos_api
+    Default: "ecos_api"
  
 Resources:
+   # IAM role for codebuild project. Should give access all AWS resources needed by build and tests run by build.
+  CodeBuildRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              Service: codebuild.amazonaws.com
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              # Allow code build to stream logs
+              - Sid: CloudWatchLogsPolicy
+                Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: "*"
+  
   Codebuild1:
     Type: 'AWS::CodeBuild::Project'
     Properties:
@@ -70,13 +95,13 @@ Resources:
       ServiceRole: 'rn:aws:iam::058264367679:role/service-role/codebuild-ECO-service-role'
       Source:
         Type: GITHUB_ENTERPRISE
-        Location: https://github.com/CivicActions/ecos_api
+        Location:'https://github.com/CivicActions/ecos_api'
         GitCloneDepth: 1
         ReportBuildStatus: false
       SourceVersion: !Ref sourceVersion
       TimeoutInMinutes: 20
       
-      CodeBuildProjectDeploy:
+   CodeBuildProjectDeploy:
     Type: AWS::CodeBuild::Project
     Properties:
       Name: !Sub "${AWS::StackName}-deploy"
@@ -139,3 +164,83 @@ Resources:
                 - Name: SourceOutput
               OutputArtifacts:
                 - Name: TestOutput
+                 - Name: Deploy
+          Actions:
+            - Name: Deploy
+              RunOrder: 1
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: '1'
+              Configuration:
+                ProjectName: !Ref CodeBuildProjectDeploy
+              InputArtifacts:
+                - Name: TestOutput
+            - Name: TagRepo
+              RunOrder: 2
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: '1'
+              Configuration:
+                ProjectName: !Ref CodeBuildProjectTagRepo
+              InputArtifacts:
+                - Name: SourceOutput
+                # Failure notifications
+  CodePipelineStateFailureEventRule:
+    Type: "AWS::Events::Rule"
+    Properties:
+      Description: "Rule for sending failure notifications to SNS topic"
+      EventPattern:
+        source:
+          - aws.codepipeline
+        detail-type:
+          - CodePipeline Action Execution State Change
+        detail:
+          pipeline:
+            - !Ref CodePipeline
+          stage:
+            - Deploy
+            - Test
+            - Source
+          state:
+            - FAILED
+      State: "ENABLED"
+      Targets:
+        - Arn: !Sub "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:CodebuildNotifications"
+          Id: "CodePipelineFailureNotifications"
+          InputTransformer:
+            InputTemplate: !Sub '"${ENV} <stage> stage has <state> for <pipeline> pipeline! Pipeline view: https://us-east-1.console.aws.amazon.com/codesuite/codepipeline/pipelines?region=us-east-1&pipelines-meta=eyJmIjp7InRleHQiOiIifSwicyI6eyJwcm9wZXJ0eSI6InVwZGF0ZWQiLCJkaX/${AWS::StackName}/view"'
+            InputPathsMap:
+              pipeline: "$.detail.pipeline"
+              stage: "$.detail.stage"
+              state: "$.detail.state"
+  # Successful deployment notifications
+  CodePipelineSuccessfulDeployEventRule:
+    Type: "AWS::Events::Rule"
+    Properties:
+      Description: "Rule for sending failure notifications to SNS topic"
+      EventPattern:
+        source:
+          - aws.codepipeline
+        detail-type:
+          - CodePipeline Stage Execution State Change
+        detail:
+          pipeline:
+            - !Ref CodePipeline
+          stage:
+            - Deploy
+          state:
+            - SUCCEEDED
+      State: "ENABLED"
+      Targets:
+        - Arn: !Sub "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:CodebuildNotifications"
+          Id: "CodePipelineSuccessfulDeployNotifications"
+          InputTransformer:
+            InputTemplate: !Sub '"${ENV} <stage> stage has <state> for <pipeline> pipeline! Pipeline view: https://us-east-1.console.aws.amazon.com/codesuite/codepipeline/pipelines?region=us-east-1&pipelines-meta=eyJmIjp7InRleHQiOiIifSwicyI6eyJwcm9wZXJ0eSI6InVwZGF0ZWQiLCJkaX${AWS::StackName}/view"'
+            InputPathsMap:
+              pipeline: "$.detail.pipeline"
+              stage: "$.detail.stage"
+              state: "$.detail.state"
