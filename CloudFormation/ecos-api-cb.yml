@@ -89,7 +89,7 @@ Resources:
           GroupName:
           Status: ENABLED
           StreamName: 
-      Name: <ecos-ui-cb>
+      Name: ecos-api-cb
       QueuedTimeoutInMinutes: 480
       ServiceRole: !Ref CodeBuildRole
       Source:
