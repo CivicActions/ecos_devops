@@ -27,7 +27,7 @@ Parameters:
   GithubRepo:
     Description: The git repository base name
     Type: String
-    Default: "ecos_ui"
+    Default: "ecos-ui"
  
 Resources:
   # IAM role for codebuild project. Should give access all AWS resources needed by build and tests run by build.
