@@ -1,0 +1,39 @@
+
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 
+Parameters:
+  env:
+    Type: String
+    Description: Different project environment name for the codebuild project
+    AllowedValues:
+    - dev
+    - test
+    - impl
+    - prod
+    Default: dev
+ 
+Resources:
+ 
+  ECRRepo:ecos-ui-repo
+    Type: "AWS::ECR::Repository"
+    Properties:
+      RepositoryName: ecos-ui-repo
+      RepositoryPolicyText:
+        Version: "2012-10-17"
+        Statement:
+        - Sid: AllowPushPull
+          Effect: Allow
+          Principal:
+            AWS: 
+              Fn::Sub: 
+              - arn:aws:iam::058264367679:root
+              - account: 
+                  Fn::FindInMap: [EnvMap, !Ref env]
+          Action:
+          - "ecr:BatchCheckLayerAvailability"
+          - "ecr:BatchGetImage"
+          - "ecr:CompleteLayerUpload"
+          - "ecr:GetDownloadUrlForLayer"
+          - "ecr:InitiateLayerUpload"
+          - "ecr:PutImage"
+          - "ecr:UploadLayerPart"
