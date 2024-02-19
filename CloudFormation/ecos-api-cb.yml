@@ -100,7 +100,7 @@ Resources:
       SourceVersion: !Ref sourceVersion
       TimeoutInMinutes: 20
       
-   CodeBuildProjectDeploy:
+  CodeBuildProjectDeploy:
     Type: AWS::CodeBuild::Project
     Name: ecos-api-cd
     Properties:
